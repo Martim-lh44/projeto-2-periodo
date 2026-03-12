@@ -1,5 +1,5 @@
 import flet as ft
-from vt2 import tema_1_3, palavras_3_1, tema_2, palavras2
+from vt2 import tema_1_3, palavras_3_1, palavras2
 
     
 def main(page: ft.Page):
@@ -38,7 +38,6 @@ def main(page: ft.Page):
         if letra not in letras_usadas:
             letras_usadas.append(letra)
         atualizar_palavra()
-        # verificar vitória
         ganhou = True
         for l in palavra_atual["palavra"]:
             if l not in letras_usadas and l not in [" ", "-"]:
@@ -71,12 +70,6 @@ def main(page: ft.Page):
         return ft.Column(
             [linha1, linha2, linha3],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
-        )
-
-    def jogar0(): 
-        clean_page() 
-        page.add(
-            teclado()
         )
 
     def jogar1():
