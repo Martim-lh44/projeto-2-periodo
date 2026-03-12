@@ -63,87 +63,23 @@ def adivinha_numero():
         print(f"Erraste! O número era {numero}.")
         return 0
 
-def nivel_1_3():
+def palavras_1_3():
     tema, palavras = random.choice(list(dicionario.items()))
     palavras_jogo = random.sample(palavras, quantidade_palavras)
-    jogo(tema, palavras_jogo)
+    return tema, palavras_jogo
 
-def nivel_2():
+def palavras_2():
+    quantidade_palavras= 3
     tema, palavras = random.choice(list(dicionario.items()))
-    palavras_jogo = [random.choice(palavras)]
-    jogo(tema, palavras_jogo)
+    palavras_jogo = random.sample(palavras, quantidade_palavras)
+    return tema, palavras_jogo
 
-def jogo(tema, palavras_jogo):
-    perdeu_jogo = False
-    for i, palavra in enumerate(palavras_jogo, start=1):
-        letras_intro = []
-        letras_intro1 = [" ", "-"]
-        chances = 6
-        ganhou = False
-        nova_vida2 = False
+tema_1_3, palavras_3_1 = palavras_1_3()
 
-        while True:
-            # Mostrar tema
-            if tema_revelado:
-                print(f"Palavra {i}/{quantidade_palavras} - Tema: {tema}")
-            else:
-                print(f"Palavra {i}/{quantidade_palavras} - Tema oculto!")
+print("Tema:", tema_1_3)
+print("Palavras:", palavras_3_1)
 
-            # Mostrar palavra
-            palavra_mostrada = " ".join([letra if letra in letras_intro1 else "_" for letra in palavra])
-            print(palavra_mostrada)
+tema_2, palavras2 = palavras_2()
 
-            # Letras já usadas
-            print("Letras já introduzidas: " + (", ".join(letras_intro) if letras_intro else ""))
-
-            # Mostrar vidas
-            print(f"Tens {chances} vidas")
-
-            # Input letra
-            tentativa = input("Escolha uma letra: ")
-
-            # Validações
-            while True:
-                if len(tentativa) != 1:
-                    tentativa = input("Insere APENAS uma letra: ").lower()
-                    continue
-                if tentativa not in letras_permitidas:
-                    tentativa = input("Carácter inválido! Insere outra letra: ").lower()
-                    continue
-                if tentativa in letras_intro:
-                    tentativa = input("Já tentaste essa letra! Escolhe outra: ").lower()
-                    continue
-                break 
-
-            letras_intro.append(tentativa)
-            letras_intro1.append(tentativa)
-
-            # Letra errada
-            if tentativa not in palavra and chances > 0:
-                chances -= 1
-
-            # Mini-jogo se perder todas as vidas
-            if not nova_vida2 and chances == 0:
-                nova_vida2 = True
-                print("Ficaste sem vidas! Vamos jogar um mini-jogo para tentar ganhar 1 vida.")
-                print("Prima ENTER para começar a jogar...")
-                input("")
-                nova_vida = adivinha_numero()
-                if nova_vida > 0:
-                    chances += nova_vida
-                    print(f"Agora tens {chances} vidas! Continua a jogar...")
-                else:
-                    print("Sem vidas adicionais. Palavra perdida.")
-
-            # Verificar vitória
-            if all(letra in letras_intro1 for letra in palavra):
-                ganhou = True
-                break
-
-            # Verificar derrota
-            if chances == 0 and nova_vida2:
-                perdeu_jogo = True
-                break
-
-        if perdeu_jogo:
-            break
+print("Tema:", tema_2)
+print("Palavras:", palavras2)
