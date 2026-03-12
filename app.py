@@ -144,15 +144,24 @@ def main(page: ft.Page):
 
     def camigos():
         clean_page()
-        classico= False
-        palavra = ft.TextField(label="Escreve a palavra para o teu amigo adivinhar", keyboard_type=ft.KeyboardType.TEXT)
-        tema = ft.TextField(label="Escreve o tema da palavra",keyboard_type=ft.KeyboardType.TEXT)
+        palavra = ft.TextField(label="Escreve a palavra para o teu amigo adivinhar")
+        tema = ft.TextField(label="Escreve o tema da palavra")
+        def comecar(e):
+            letras_usadas.clear()
+            palavra_atual["palavra"] = palavra.value.lower()
+            clean_page()
+            page.add(
+                ft.Text(f"Tema: {tema.value}", size=20),
+                texto_palavra,
+                teclado()
+            )
+            atualizar_palavra()
         page.add(
-             ft.Text("Jogo da Forca", size=22, weight=ft.FontWeight.BOLD),
-            ft.Text("Escolhe a palavra", size=15,),
+            ft.Text("Jogo da Forca", size=22, weight=ft.FontWeight.BOLD),
+            ft.Text("Escolhe a palavra", size=15),
             palavra,
             tema,
-            ft.ElevatedButton("Começar", on_click=jogar0)
+            ft.ElevatedButton("Começar", on_click=comecar)
         )
 
     def modo_jogo():
