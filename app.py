@@ -12,12 +12,95 @@ def main(page: ft.Page):
     palavra_atual = {"palavra": ""}
     letras_usadas = []
     texto_palavra = ft.Text(size=30, weight=ft.FontWeight.BOLD)
-    palavras_jogo = []
-    indice_palavra = {"valor": 0}
+
     historico = []
     historico.append(lambda: None)
-    jogar_again = True
+
+    vidas= {"valor": 6}
+    texto_vidas= ft.Text()
+
+    letras_erradas = []
+    texto_erradas = ft.Text()
+
+    jogo_terminado= {"valor": False}
+
+    botoes_teclado = {}
+
+    forca = [
+        """
+        _______
+        |/      |
+        |
+        |
+        |
+        |
+        |
+        _|___
+        """,
+        """
+        _______
+        |/      |
+        |      (_)
+        |
+        |
+        |
+        |
+        _|___
+        """,
+        """
+        _______
+        |/      |
+        |      (_)
+        |       |
+        |       |
+        |
+        |
+        _|___
+        """,
+        """
+        _______
+        |/      |
+        |      (_)
+        |      \|
+        |       |
+        |
+        |
+        _|___
+        """,
+        """
+        _______
+        |/      |
+        |      (_)
+        |      \|/
+        |       |
+        |
+        |
+        _|___
+        """,
+        """
+        _______
+        |/      |
+        |      (_)
+        |      \|/
+        |       |
+        |      /
+        |
+        _|___
+        """,
+        """
+        _______
+        |/      |
+        |      (_)
+        |      \|/
+        |       |
+        |      / \     
+        |
+        _|___
+        """
+    ]
     
+    texto_forca= ft.Text(value=forca[0], font_family="monospace")
+
     def clean_page():
         page.controls.clear()
         page.update()
@@ -41,57 +124,81 @@ def main(page: ft.Page):
         texto_palavra.value = resultado
         page.update()
 
-    def vitoria():
-        chances=6
-      
-
     def clicar_letra(letra):
+        if jogo_terminado["valor"]:
+            return
+        botoes_teclado[letra].disabled = True
         if letra not in letras_usadas:
             letras_usadas.append(letra)
+        if letra not in palavra_atual["palavra"]:
+            letras_erradas.append(letra)
+            vidas["valor"] -= 1
+        texto_vidas.value = f"Vidas: {vidas['valor']}"
+        texto_erradas.value = "Erradas: " + ", ".join(letras_erradas)
+        texto_forca.value = forca[6 - vidas["valor"]]
         atualizar_palavra()
         ganhou = True
         for l in palavra_atual["palavra"]:
             if l not in letras_usadas and l not in [" ", "-"]:
                 ganhou = False
-        if ganhou:
+        if ganhou and not jogo_terminado["valor"]:
             indice_palavra["valor"] += 1
             if indice_palavra["valor"] < len(palavras_jogo):
                 letras_usadas.clear()
+                letras_erradas.clear()
+                for botao in botoes_teclado.values():
+                    botao.disabled = False
                 palavra_atual["palavra"] = palavras_jogo[indice_palavra["valor"]]
                 page.add(ft.Text("Próxima palavra!", size=20))
                 atualizar_palavra()
             else:
                 page.add(ft.Text("GANHASTE O JOGO!", size=25, color="green"))
+                jogo_terminado["valor"] = True
+        if vidas["valor"] == 0:
+            page.add(ft.Text(f"PERDESTE! Palavra: {palavra_atual['palavra']}", size=25, color="red"))
+            jogo_terminado["valor"] = True
+        page.update()
 
     def teclado():
         letras = "QWERTYUIOPASDFGHJKLZXCVBNM"
         botoes = []
         for letra in letras:
-            botoes.append(
-                ft.ElevatedButton(
+                botao= ft.ElevatedButton(
                     letra,
                     on_click=lambda e, l=letra.lower(): clicar_letra(l)
                 )
-            )
-
+                botoes_teclado[letra.lower()] = botao 
+                botoes.append(botao)
         linha1 = ft.Row(botoes[0:10], alignment=ft.MainAxisAlignment.CENTER)
         linha2 = ft.Row(botoes[10:19], alignment=ft.MainAxisAlignment.CENTER)
         linha3 = ft.Row(botoes[19:26], alignment=ft.MainAxisAlignment.CENTER)
-
         return ft.Column(
             [linha1, linha2, linha3],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
 
+    def reset_jogo():
+        letras_usadas.clear()
+        letras_erradas.clear()
+        botoes_teclado.clear()
+        vidas["valor"] = 6
+        jogo_terminado["valor"] = False
+        texto_vidas.value = f"Vidas: {vidas['valor']}"
+        texto_erradas.value = ""
+        texto_forca.value = forca[0]
+
     def jogar1():
         clean_page()
-        letras_usadas.clear()
+        reset_jogo()
         palavra_atual["palavra"] = palavras_3_1[0]
         print("Tema:", tema_1_3)
         print("Palavra:", palavra_atual["palavra"])
         page.add(
             ft.Text(f"Tema: {tema_1_3}", size=20),
+            texto_forca,
             texto_palavra,
+            texto_vidas,
+            texto_erradas,
             teclado(),
             ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(niveis))
         )
@@ -99,12 +206,15 @@ def main(page: ft.Page):
 
     def jogar2(): 
         clean_page()
-        letras_usadas.clear()
+        reset_jogo()
         palavra_atual["palavra"] = palavras_3_1[0]
         print("Palavra:", palavra_atual["palavra"])
         page.add(
             ft.Text(f"Tema: Indisponível", size=20),
+            texto_forca,
             texto_palavra,
+            texto_vidas,
+            texto_erradas,
             teclado(),
             ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(niveis))
         )
@@ -113,7 +223,7 @@ def main(page: ft.Page):
 
     def jogar3(): 
         clean_page()
-        letras_usadas.clear()
+        reset_jogo()
         palavras_jogo.clear()
         palavras_jogo.extend(palavras2)
         indice_palavra["valor"] = 0
@@ -122,7 +232,10 @@ def main(page: ft.Page):
         print("Palavra:", palavra_atual["palavra"])
         page.add(
             ft.Text(f"Tema: {tema_2}", size=20),
+            texto_forca,
             texto_palavra,
+            texto_vidas,
+            texto_erradas,
             teclado(),
             ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(niveis))
         )
@@ -155,12 +268,15 @@ def main(page: ft.Page):
         palavra = ft.TextField(label="Escreve a palavra para o teu amigo adivinhar")
         tema = ft.TextField(label="Escreve o tema da palavra")
         def comecar(e):
-            letras_usadas.clear()
+            reset_jogo()
             palavra_atual["palavra"] = palavra.value.lower()
             clean_page()
             page.add(
                 ft.Text(f"Tema: {tema.value}", size=20),
+                texto_forca,
                 texto_palavra,
+                texto_vidas,
+                texto_erradas,
                 teclado(),
                 ft.ElevatedButton("Voltar", on_click=voltar)
             )
