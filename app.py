@@ -1,5 +1,5 @@
 import flet as ft
-from vt2 import tema_1_3, palavras_3_1, palavras2
+from vt2 import tema_1_3, palavras_3_1, palavras2, tema_2
 
     
 def main(page: ft.Page):
@@ -14,15 +14,22 @@ def main(page: ft.Page):
     texto_palavra = ft.Text(size=30, weight=ft.FontWeight.BOLD)
     palavras_jogo = []
     indice_palavra = {"valor": 0}
+    historico = []
+    historico.append(lambda: None)
     jogar_again = True
     
     def clean_page():
         page.controls.clear()
         page.update()
+    
+    def abrir_pagina(funcao):
+        historico.append(funcao)
+        funcao()
 
-    def voltar():
-        page.views.pop()
-        page.update()
+    def voltar(e):
+        if len(historico) > 1:
+            historico.pop()  # remove a atual
+            historico[-1]()  
 
     def atualizar_palavra():
         resultado = ""
@@ -33,6 +40,10 @@ def main(page: ft.Page):
                 resultado += "_ "
         texto_palavra.value = resultado
         page.update()
+
+    def vitoria():
+        chances=6
+      
 
     def clicar_letra(letra):
         if letra not in letras_usadas:
@@ -81,7 +92,8 @@ def main(page: ft.Page):
         page.add(
             ft.Text(f"Tema: {tema_1_3}", size=20),
             texto_palavra,
-            teclado()
+            teclado(),
+            ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(niveis))
         )
         atualizar_palavra()
 
@@ -93,7 +105,8 @@ def main(page: ft.Page):
         page.add(
             ft.Text(f"Tema: Indisponível", size=20),
             texto_palavra,
-            teclado()
+            teclado(),
+            ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(niveis))
         )
         atualizar_palavra()
         
@@ -105,12 +118,13 @@ def main(page: ft.Page):
         palavras_jogo.extend(palavras2)
         indice_palavra["valor"] = 0
         palavra_atual["palavra"] = palavras_jogo[indice_palavra["valor"]]
-        print("Tema:", tema_1_3)
+        print("Tema:", tema_2)
         print("Palavra:", palavra_atual["palavra"])
         page.add(
-            ft.Text(f"Tema: {tema_1_3}", size=20),
+            ft.Text(f"Tema: {tema_2}", size=20),
             texto_palavra,
-            teclado()
+            teclado(),
+            ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(niveis))
         )
         atualizar_palavra()
 
@@ -123,12 +137,13 @@ def main(page: ft.Page):
                         ft.Text("Escolha o nível", size=15,),
                         ft.Row(
                             [
-                                ft.ElevatedButton("Nível 1", on_click=jogar1),
-                                ft.ElevatedButton("Nível 2", on_click=jogar2),
-                                ft.ElevatedButton("Nível 3", on_click=jogar3)
+                                ft.ElevatedButton("Nível 1", on_click=lambda e: abrir_pagina(jogar1)),
+                                ft.ElevatedButton("Nível 2", on_click=lambda e: abrir_pagina(jogar2)),
+                                ft.ElevatedButton("Nível 3", on_click=lambda e: abrir_pagina(jogar3))
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
+                        ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(modo_jogo))
                     ],
                     expand=True,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -146,7 +161,8 @@ def main(page: ft.Page):
             page.add(
                 ft.Text(f"Tema: {tema.value}", size=20),
                 texto_palavra,
-                teclado()
+                teclado(),
+                ft.ElevatedButton("Voltar", on_click=voltar)
             )
             atualizar_palavra()
         page.add(
@@ -154,7 +170,8 @@ def main(page: ft.Page):
             ft.Text("Escolhe a palavra", size=15),
             palavra,
             tema,
-            ft.ElevatedButton("Começar", on_click=comecar)
+            ft.ElevatedButton("Começar", on_click=comecar),
+            ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(modo_jogo))
         )
 
     def modo_jogo():
@@ -166,9 +183,8 @@ def main(page: ft.Page):
                         ft.Text("Escolha o modo de jogo", size=15,),
                         ft.Row(
                             [
-                                ft.ElevatedButton("Clássicos", on_click=niveis),
-                                ft.ElevatedButton("Com Amigos", on_click=camigos),
-                                ft.ElevatedButton("Voltar", on_click=voltar)
+                                ft.ElevatedButton("Clássicos", on_click=lambda e: abrir_pagina(niveis)),
+                                ft.ElevatedButton("Com Amigos", on_click=lambda e: abrir_pagina(camigos))
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
@@ -184,7 +200,7 @@ def main(page: ft.Page):
                     ft.Text("Jogo da Forca", size=22, weight=ft.FontWeight.BOLD),
                     ft.Row(
                         [
-                            ft.ElevatedButton("Começar", on_click=modo_jogo)
+                            ft.ElevatedButton("Começar", on_click=lambda e: abrir_pagina(modo_jogo))
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
                     ),
