@@ -65,23 +65,24 @@ def main(page: ft.Page):
         tema_2, palavras2 = palavras_2()
 
     page.title = "Jogo da Forca"
+    page.theme_mode = ft.ThemeMode.DARK
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.vertical_alignment = ft.MainAxisAlignment.START
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
 
     indice_palavra = {"valor": 0}
     palavras_jogo = []
     palavra_atual = {"palavra": ""}
     letras_usadas = []
-    texto_palavra = ft.Text(size=30, weight=ft.FontWeight.BOLD)
+    texto_palavra = ft.Text(size=32, weight=ft.FontWeight.BOLD, color="#E5E7EB")
 
     historico = []
     historico.append(lambda: None)
 
     vidas= {"valor": 6}
-    texto_vidas= ft.Text()
+    texto_vidas= ft.Text(color="#F97373", size=16)
 
     letras_erradas = []
-    texto_erradas = ft.Text()
+    texto_erradas = ft.Text(color="#F97373", size=14)
 
     jogo_terminado= {"valor": False}
 
@@ -174,6 +175,7 @@ def main(page: ft.Page):
         font_family="Courier New",
         size=18,
         weight=ft.FontWeight.BOLD,
+        color="#FACC15"
     )
 
     capa_derrota = ft.Text(
@@ -189,6 +191,7 @@ def main(page: ft.Page):
         font_family="Courier New",
         size=18,
         weight=ft.FontWeight.BOLD,
+        color="#F97373"
     )
 
     capa_vitoria = ft.Text(
@@ -204,6 +207,7 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         font_family="Courier New",
         size=18,
         weight=ft.FontWeight.BOLD,
+        color="#4ADE80"
     )
 
     def clean_page():
@@ -253,6 +257,7 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
             if l not in letras_usadas and l not in [" ", "-"]:
                 ganhou = False
 
+        # VITÓRIA
         if ganhou and not jogo_terminado["valor"]:
             indice_palavra["valor"] += 1
 
@@ -262,71 +267,105 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
                 for botao in botoes_teclado.values():
                     botao.disabled = False
                 palavra_atual["palavra"] = palavras_jogo[indice_palavra["valor"]]
-                page.add(ft.Text("Próxima palavra!", size=20))
+                texto_erradas.value = ""
+                texto_forca.value = forca[0]
                 atualizar_palavra()
             else:
                 jogo_terminado["valor"] = True
                 clean_page()
                 page.add(
-                    ft.Column(
-                        [
-                            capa_vitoria,
-                            ft.Text("Parabéns! Adivinhaste todas as palavras!", size=20),
-                            ft.Container(height=40),
-                            ft.Row(
-                                [
-                                    ft.ElevatedButton(
-                                        "Jogar Outra Vez",
-                                        on_click=lambda e: reiniciar_nivel(nivel_atual)
-                                    ),
-                                    ft.ElevatedButton(
-                                        "Menu",
-                                        on_click=lambda e: (
-                                            gerar_novas_palavras_1_3(),
-                                            gerar_novas_palavras_2(),
-                                            abrir_pagina(modo_jogo)
-                                        )
-                                    )
-                                ],
-                                alignment=ft.MainAxisAlignment.CENTER
-                            )
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        expand=True
+                    ft.Container(
+                        content=ft.Column(
+                            [
+                                capa_vitoria,
+                                ft.Text(
+                                    "Parabéns! Adivinhaste todas as palavras!",
+                                    size=20,
+                                    color="#E5E7EB",
+                                ),
+                                ft.Container(height=30),
+                                ft.Row(
+                                    [
+                                        ft.ElevatedButton(
+                                            "Jogar Outra Vez",
+                                            icon=ft.Icons.REPLAY,
+                                            bgcolor="#22C55E",
+                                            color="black",
+                                            on_click=lambda e: reiniciar_nivel(
+                                                nivel_atual
+                                            ),
+                                        ),
+                                        ft.ElevatedButton(
+                                            "Menu",
+                                            icon=ft.Icons.HOME,
+                                            bgcolor="#38BDF8",
+                                            color="black",
+                                            on_click=lambda e: (
+                                                gerar_novas_palavras_1_3(),
+                                                gerar_novas_palavras_2(),
+                                                abrir_pagina(modo_jogo),
+                                            ),
+                                        ),
+                                    ],
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                ),
+                            ],
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                        padding=20,
+                        border_radius=16,
+                        bgcolor="#020617",
                     )
                 )
 
+        # DERROTA
         if vidas["valor"] == 0:
             jogo_terminado["valor"] = True
             clean_page()
             page.add(
-                ft.Column(
-                    [
-                        capa_derrota,
-                        ft.Text(f"A palavra era: {palavra_atual['palavra']}", size=20),
-                        ft.Container(height=40),
-                        ft.Row(
-                            [
-                                ft.ElevatedButton(
-                                    "Tentar Outra Vez",
-                                    on_click=lambda e: reiniciar_nivel(nivel_atual)
-                                ),
-                                ft.ElevatedButton(
-                                    "Menu",
-                                    on_click=lambda e: (
-                                        gerar_novas_palavras_1_3(),
-                                        gerar_novas_palavras_2(),
-                                        abrir_pagina(modo_jogo)
-                                    )
-                                )
-                            ],
-                            alignment=ft.MainAxisAlignment.CENTER
-                        )
-                    ],
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    expand=True
+                ft.Container(
+                    content=ft.Column(
+                        [
+                            capa_derrota,
+                            ft.Text(
+                                f"A palavra era: {palavra_atual['palavra']}",
+                                size=20,
+                                color="#E5E7EB",
+                            ),
+                            ft.Container(height=30),
+                            ft.Row(
+                                [
+                                    ft.ElevatedButton(
+                                        "Tentar Outra Vez",
+                                        icon=ft.Icons.REPLAY,
+                                        bgcolor="#F97373",
+                                        color="black",
+                                        on_click=lambda e: reiniciar_nivel(
+                                            nivel_atual
+                                        ),
+                                    ),
+                                    ft.ElevatedButton(
+                                        "Menu",
+                                        icon=ft.Icons.HOME,
+                                        bgcolor="#38BDF8",
+                                        color="black",
+                                        on_click=lambda e: (
+                                            gerar_novas_palavras_1_3(),
+                                            gerar_novas_palavras_2(),
+                                            abrir_pagina(modo_jogo),
+                                        ),
+                                    ),
+                                ],
+                                alignment=ft.MainAxisAlignment.CENTER,
+                            ),
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    padding=20,
+                    border_radius=16,
+                    bgcolor="#020617",
                 )
             )
 
@@ -339,7 +378,13 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         for letra in letras:
             botao = ft.ElevatedButton(
                 letra,
-                on_click=lambda e, l=letra.lower(): clicar_letra(l)
+                width=46,
+                height=42,
+                style=ft.ButtonStyle(
+                    bgcolor={"": "#0F172A"},
+                    color={"": "#E5E7EB"},
+                ),
+                on_click=lambda e, l=letra.lower(): clicar_letra(l),
             )
             botoes_teclado[letra.lower()] = botao
             botoes.append(botao)
@@ -350,7 +395,8 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
 
         return ft.Column(
             [linha1, linha2, linha3],
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=6,
         )
 
     def reiniciar_nivel(func_nivel):
@@ -371,7 +417,7 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         elif func_nivel == jogar3:
             gerar_novas_palavras_2()
         
-        if func_nivel != camigos:  # só atualiza palavra se não for Camigos
+        if func_nivel != camigos:
             if palavras_jogo:
                 palavra_atual["palavra"] = palavras_jogo[indice_palavra["valor"]]
         
@@ -390,18 +436,11 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         palavras_jogo.clear()
         palavras_jogo.extend(palavras_3_1)
         palavra_atual["palavra"] = palavras_jogo[0]
+        texto_vidas.value = f"Vidas: {vidas['valor']}"
+        texto_erradas.value = ""
+        texto_forca.value = forca[0]
+        layout_jogo(tema_1_3, voltar_destino=niveis)
 
-        page.add(
-            ft.Text(f"Tema: {tema_1_3}", size=20),
-            texto_forca,
-            texto_palavra,
-            texto_vidas,
-            texto_erradas,
-            teclado(),
-            ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(niveis))
-        )
-
-        atualizar_palavra()
 
     def jogar2():
         nonlocal nivel_atual
@@ -414,18 +453,10 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         palavras_jogo.clear()
         palavras_jogo.extend(palavras_3_1)
         palavra_atual["palavra"] = palavras_jogo[0]
-
-        page.add(
-            ft.Text(f"Tema: Indisponível", size=20),
-            texto_forca,
-            texto_palavra,
-            texto_vidas,
-            texto_erradas,
-            teclado(),
-            ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(niveis))
-        )
-
-        atualizar_palavra()
+        texto_vidas.value = f"Vidas: {vidas['valor']}"
+        texto_erradas.value = ""
+        texto_forca.value = forca[0]
+        layout_jogo("Indisponível", voltar_destino=niveis)
 
     def jogar3():
         nonlocal nivel_atual
@@ -438,38 +469,128 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         palavras_jogo.extend(palavras2)
         indice_palavra["valor"] = 0
         palavra_atual["palavra"] = palavras_jogo[indice_palavra["valor"]]
+        texto_vidas.value = f"Vidas: {vidas['valor']}"
+        texto_erradas.value = ""
+        texto_forca.value = forca[0]
+        layout_jogo(tema_2, voltar_destino=niveis)
 
+    def layout_jogo(tema, voltar_destino):
         page.add(
-            ft.Text(f"Tema: {tema_2}", size=20),
-            texto_forca,
-            texto_palavra,
-            texto_vidas,
-            texto_erradas,
-            teclado(),
-            ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(niveis))
+            ft.Container(
+                bgcolor="#020617",
+                border_radius=20,
+                padding=20,
+                content=ft.Column(
+                    [
+                        ft.Text(
+                            f"Tema: {tema}",
+                            size=20,
+                            weight=ft.FontWeight.BOLD,
+                            color="#A5B4FC",
+                        ),
+                        ft.Row(
+                            [
+                                ft.Container(
+                                    content=texto_forca,
+                                    padding=10,
+                                    border_radius=12,
+                                    bgcolor="#020617",
+                                ),
+                                ft.Column(
+                                    [
+                                        texto_palavra,
+                                        texto_vidas,
+                                        texto_erradas,
+                                    ],
+                                    spacing=5,
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                        ),
+                        ft.Container(height=10),
+                        teclado(),
+                        ft.Container(height=10),
+                        ft.Row(
+                            [
+                                ft.ElevatedButton(
+                                    "Voltar",
+                                    icon=ft.Icons.ARROW_BACK,
+                                    bgcolor="#1E293B",
+                                    color="#E5E7EB",
+                                    on_click=lambda e: abrir_pagina(voltar_destino),
+                                )
+                            ],
+                            alignment=ft.MainAxisAlignment.END,
+                        ),
+                    ],
+                    spacing=15,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+            )
         )
-
         atualizar_palavra()
 
     def niveis():
         clean_page()
         page.add(
-            ft.Column(
-                [
-                    ft.Text("Jogo da Forca", size=22, weight=ft.FontWeight.BOLD),
-                    ft.Text("Escolha o nível", size=15),
-                    ft.Row(
-                        [
-                            ft.ElevatedButton("Nível 1", on_click=lambda e: abrir_pagina(jogar1)),
-                            ft.ElevatedButton("Nível 2", on_click=lambda e: abrir_pagina(jogar2)),
-                            ft.ElevatedButton("Nível 3", on_click=lambda e: abrir_pagina(jogar3))
-                        ],
-                        alignment=ft.MainAxisAlignment.CENTER,
-                    ),
-                    ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(modo_jogo))
-                ],
-                expand=True,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            ft.Container(
+                bgcolor="#020617",
+                border_radius=20,
+                padding=20,
+                content=ft.Column(
+                    [
+                        ft.Text(
+                            "Níveis Clássicos",
+                            size=22,
+                            weight=ft.FontWeight.BOLD,
+                            color="#E5E7EB",
+                        ),
+                        ft.Text(
+                            "Escolhe a dificuldade:",
+                            size=15,
+                            color="#9CA3AF",
+                        ),
+                        ft.Container(height=10),
+                        ft.Row(
+                            [
+                                ft.ElevatedButton(
+                                    "Nível 1",
+                                    icon=ft.Icons.LOOKS_ONE,
+                                    bgcolor="#22C55E",
+                                    color="black",
+                                    on_click=lambda e: abrir_pagina(jogar1),
+                                ),
+                                ft.ElevatedButton(
+                                    "Nível 2",
+                                    icon=ft.Icons.LOOKS_TWO,
+                                    bgcolor="#FACC15",
+                                    color="black",
+                                    on_click=lambda e: abrir_pagina(jogar2),
+                                ),
+                                ft.ElevatedButton(
+                                    "Nível 3",
+                                    icon=ft.Icons.LOOKS_3,
+                                    bgcolor="#F97373",
+                                    color="black",
+                                    on_click=lambda e: abrir_pagina(jogar3),
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            spacing=15,
+                        ),
+                        ft.Container(height=10),
+                        ft.ElevatedButton(
+                            "Voltar",
+                            icon=ft.Icons.ARROW_BACK,
+                            bgcolor="#1E293B",
+                            color="#E5E7EB",
+                            on_click=lambda e: abrir_pagina(modo_jogo),
+                        ),
+                    ],
+                    expand=True,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
             )
         )
 
@@ -487,20 +608,48 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         atualizar_palavra()
         clean_page()
         page.add(
-            ft.Column(
-                [
-                    ft.Text("Jogo da Forca", size=22, weight=ft.FontWeight.BOLD),
-                    ft.Text("Escolha o modo de jogo", size=15),
-                    ft.Row(
-                        [
-                            ft.ElevatedButton("Clássicos", on_click=lambda e: abrir_pagina(niveis)),
-                            ft.ElevatedButton("Com Amigos", on_click=lambda e: abrir_pagina(camigos))
-                        ],
-                        alignment=ft.MainAxisAlignment.CENTER,
-                    ),
-                ],
-                expand=True,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            ft.Container(
+                bgcolor="#020617",
+                border_radius=20,
+                padding=20,
+                content=ft.Column(
+                    [
+                        ft.Text(
+                            "Jogo da Forca",
+                            size=24,
+                            weight=ft.FontWeight.BOLD,
+                            color="#E5E7EB",
+                        ),
+                        ft.Text(
+                            "Escolhe o modo de jogo:",
+                            size=15,
+                            color="#9CA3AF",
+                        ),
+                        ft.Container(height=10),
+                        ft.Row(
+                            [
+                                ft.ElevatedButton(
+                                    "Clássicos",
+                                    icon=ft.Icons.GAMES,
+                                    bgcolor="#22C55E",
+                                    color="black",
+                                    on_click=lambda e: abrir_pagina(niveis),
+                                ),
+                                ft.ElevatedButton(
+                                    "Com Amigos",
+                                    icon=ft.Icons.PEOPLE,
+                                    bgcolor="#38BDF8",
+                                    color="black",
+                                    on_click=lambda e: abrir_pagina(camigos),
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            spacing=15,
+                        ),
+                    ],
+                    expand=True,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
             )
         )
 
@@ -508,52 +657,145 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         nonlocal nivel_atual
         nivel_atual = camigos
         clean_page()
-        palavra = ft.TextField(label="Escreve a palavra para o teu amigo adivinhar")
-        tema = ft.TextField(label="Escreve o tema da palavra")
+        palavra = ft.TextField(
+            label="Palavra para o teu amigo",
+            width=350,
+            bgcolor="#020617",
+        )
+        tema = ft.TextField(
+            label="Tema da palavra",
+            width=350,
+            bgcolor="#020617",
+        )
 
-        def comecar(e):
+        def comecar():
             letras_usadas.clear()
             letras_erradas.clear()
+            vidas["valor"] = 6
+            texto_vidas.value = f"Vidas: {vidas['valor']}"
+            texto_erradas.value = ""
+            texto_forca.value = forca[0]
             botoes_teclado.clear()
             palavra_atual["palavra"] = palavra.value.lower()
             clean_page()
             page.add(
-                ft.Text(f"Tema: {tema.value}", size=20),
-                texto_forca,
-                texto_palavra,
-                texto_vidas,
-                texto_erradas,
-                teclado(),
-                ft.ElevatedButton("Voltar", on_click=voltar)
+                ft.Container(
+                    bgcolor="#020617",
+                    border_radius=20,
+                    padding=20,
+                    content=ft.Column(
+                        [
+                            ft.Text(
+                                f"Tema: {tema.value}",
+                                size=20,
+                                color="#A5B4FC",
+                                weight=ft.FontWeight.BOLD,
+                            ),
+                            texto_forca,
+                            texto_palavra,
+                            texto_vidas,
+                            texto_erradas,
+                            teclado(),
+                            ft.Container(height=10),
+                            ft.ElevatedButton(
+                                "Voltar",
+                                icon=ft.Icons.ARROW_BACK,
+                                bgcolor="#1E293B",
+                                color="#E5E7EB",
+                                on_click=voltar,
+                            ),
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                )
             )
             atualizar_palavra()
 
         page.add(
-            ft.Text("Jogo da Forca", size=22, weight=ft.FontWeight.BOLD),
-            ft.Text("Escolhe a palavra", size=15),
-            palavra,
-            tema,
-            ft.ElevatedButton("Começar", on_click=comecar),
-            ft.ElevatedButton("Voltar", on_click=lambda e: abrir_pagina(modo_jogo))
+            ft.Container(
+                bgcolor="#020617",
+                border_radius=20,
+                padding=20,
+                content=ft.Column(
+                    [
+                        ft.Text(
+                            "Jogar com Amigos",
+                            size=22,
+                            weight=ft.FontWeight.BOLD,
+                            color="#E5E7EB",
+                        ),
+                        ft.Text(
+                            "Escreve a palavra e o tema para o teu amigo adivinhar.",
+                            size=14,
+                            color="#9CA3AF",
+                        ),
+                        ft.Container(height=10),
+                        palavra,
+                        tema,
+                        ft.Container(height=10),
+                        ft.Row(
+                            [
+                                ft.ElevatedButton(
+                                    "Começar",
+                                    icon=ft.Icons.PLAY_ARROW,
+                                    bgcolor="#22C55E",
+                                    color="black",
+                                    on_click=comecar,
+                                ),
+                                ft.ElevatedButton(
+                                    "Voltar",
+                                    icon=ft.Icons.ARROW_BACK,
+                                    bgcolor="#1E293B",
+                                    color="#E5E7EB",
+                                    on_click=lambda e: abrir_pagina(modo_jogo),
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            spacing=15,
+                        ),
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+            )
         )
 
     def capa_abertura():
         clean_page()
         page.add(
-            ft.Column(
-                [
-                    titulo_forca,
-                    ft.Text("Tenta adivinhar a palavra antes de seres enforcado!", size=16),
-                    ft.Container(height=40),
-                    ft.ElevatedButton(
-                        "COMEÇAR",
-                        width=200,
-                        on_click=lambda e: abrir_pagina(modo_jogo)
-                    )
-                ],
-                expand=True,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                alignment=ft.MainAxisAlignment.CENTER
+            ft.Container(
+                bgcolor="#020617",
+                border_radius=24,
+                padding=24,
+                content=ft.Column(
+                    [
+                        titulo_forca,
+                        ft.Text(
+                            "Tenta adivinhar a palavra antes de seres enforcado!",
+                            size=16,
+                            color="#9CA3AF",
+                        ),
+                        ft.Container(height=20),
+                        ft.ElevatedButton(
+                            "COMEÇAR",
+                            icon=ft.Icons.PLAY_ARROW,
+                            width=220,
+                            height=50,
+                            bgcolor="#22C55E",
+                            color="black",
+                            style=ft.ButtonStyle(
+                                shape={
+                                    "": ft.RoundedRectangleBorder(radius=12),
+                                },
+                            ),
+                            on_click=lambda e: abrir_pagina(modo_jogo),
+                        ),
+                    ],
+                    expand=True,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=15,
+                ),
             )
         )
 
