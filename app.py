@@ -350,10 +350,29 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         if jogo_terminado["valor"] or minijogo_ativo["valor"]:
             return
 
+        botao = botoes_teclado[letra]
+
         botoes_teclado[letra].disabled = True
 
         if letra not in letras_usadas:
             letras_usadas.append(letra)
+
+        if letra in palavra_atual["palavra"]:
+            botao.style = ft.ButtonStyle(
+                bgcolor={"": "#22C55E"},  # verde
+                color={"": "black"},
+            )
+
+        else:
+            botao.style = ft.ButtonStyle(
+                bgcolor={"": "#F97373"},  # vermelho
+                color={"": "black"},
+            )
+
+            letras_erradas.append(letra)
+            vidas["valor"] -= 1
+
+        botao.disabled = True
 
         if letra not in palavra_atual["palavra"]:
             letras_erradas.append(letra)
@@ -441,7 +460,6 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
 
         page.update()
 
-    # RESTO DO CÓDIGO (teclado, niveis, etc.) MANTIDO IGUAL
     def teclado():
         letras = "QWERTYUIOPASDFGHJKLZXCVBNM"
         botoes = []
