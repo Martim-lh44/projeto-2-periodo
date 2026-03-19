@@ -1,45 +1,8 @@
 import flet as ft 
 import random
+from dict import dicionario  # Assumindo que já tens o dict.py importado
 
 def main(page: ft.Page):
-    dicionario = {
-        "ANIMAIS": ["leao","zebra","tigre","coala","panda","foca","lince","porco","cavalo",
-                    "cabra","galgo","burro","bufalo","urso","raposa","lobo","gato","cao",
-                    "pomba","corvo","aguia","falcao","pato","ganso","avestruz","peru","pavao",
-                    "golfinho","tubarao","orca","salmao","truta","polvo","lula","caranguejo",
-                    "lagosta","tartaruga","sapo","cobra","iguana","cavalo-marinho","formiga",
-                    "abelha","minhoca","caracol","coelho","canguru","hiena","lhama","crocodilo"],
-        "PAISES": ["portugal","espanha","franca","italia","alemanha","holanda","belgica","suica",
-                   "austria","polonia","noruega","suecia","finlandia","dinamarca","irlanda",
-                   "reino unido","grecia","turquia","russia","ucrania","china","japao","coreia",
-                   "india","nepal","tailandia","vietname","malasia","indonesia","australia",
-                   "nova zelandia","egito","marrocos","tunisia","africa do sul","quenia",
-                   "nigeria","etiopia","canada","mexico","brasil","argentina"],
-        "ALIMENTOS": ["massa","arroz","queijo","iogurte","croissant","peixe","carne","batata",
-                      "feijao","tomate","cebola","cenoura","alface","sopa","pizza","hamburguer",
-                      "tosta","sandes","chocolate","gelado","biscoito","omelete","lasanha",
-                      "sushi","baunilha","morango","banana","abacate","manga","pera","kiwi",
-                      "pessego","amendoim","ervilha","berinjela","abobora","chuchu","brocolo",
-                      "couve","frango","espinafre","melancia","melao","tapioca"],
-        "MARCAS": ["apple","samsung","lenovo","microsoft","google","amazon","tesla","mercedes",
-                   "volkswagen","toyota","honda","ferrari","reebok","gucci","prada","chanel",
-                   "nespresso","coca-cola","pepsi","red bull","nestle","danone","mcdonalds","spotify",
-                   "adidas","ikea","lacoste","rolex","canon","sony","asus","puma","fila","intel",
-                   "burger king","starbucks","peugeot","jaguar","philips","vodafone","nude project","pato"],
-        "CIDADES": ["lisboa","porto","braga","coimbra","madrid","paris","roma","berlim","viena",
-                    "londres","dublin","estocolmo","varsovia","budapeste","atenas","istambul",
-                    "moscovo","new york","los angeles","chicago","toronto","vancouver",
-                    "cidade do mexico","sao paulo","rio de janeiro","brasilia","buenos aires",
-                    "toquio","pequim","xangai","banguecoque","nova deli","melbourne","sydney",
-                    "cairo","singapura","barcelona","valencia","sevilha","zurique"],
-        "OBJETOS": ["mesa","cadeira","lampada","caneta","borracha","mochila","prato","colher",
-                    "telemovel","computador","teclado","monitor","tomada","carteira","porta","janela",
-                    "cortina","livro","caderno","camisola","sapatos","toalha","manta","almofada",
-                    "garrafa","relogio","carregador","quadro","radio","aquecedor","espelho",
-                    "cobertor","almofada","sofa","poltrona","armario","televisao","fogao",
-                    "frigorifico","micro-ondas","teclado"]
-    }
-
     quantidade_palavras = 1
 
     def palavras_1_3():
@@ -85,86 +48,91 @@ def main(page: ft.Page):
     texto_erradas = ft.Text(color="#F97373", size=14)
 
     jogo_terminado= {"valor": False}
+    
+    # NOVAS VARIÁVEIS DO MINIJOGO
+    numero_secreto = {"valor": 0}
+    minijogo_ativo = {"valor": False}
 
     botoes_teclado = {}
 
     forca = [
         """
-          _______
-         |/      |
-         |
-         |
-         |
-         |
-         |
+         _______
+        |/      |
+        |
+        |
+        |
+        |
+        |
         _|___
         """,
         """
-          _______
-         |/      |
-         |      (_)
-         |
-         |
-         |
-         |
+         _______
+        |/      |
+        |      (_)
+        |
+        |
+        |
+        |
         _|___
         """,
         """
-          _______
-         |/      |
-         |      (_)
-         |       |
-         |       |
-         |
-         |
+         _______
+        |/      |
+        |      (_)
+        |       |
+        |       |
+        |
+        |
         _|___
         """,
         """
-          _______
-         |/      |
-         |      (_)
-         |      \|
-         |       |
-         |
-         |
+         _______
+        |/      |
+        |      (_)
+        |      \|
+        |       |
+        |
+        |
         _|___
         """,
         """
-          _______
-         |/      |
-         |      (_)
-         |      \|/
-         |       |
-         |
-         |
+         _______
+        |/      |
+        |      (_)
+        |     \|/
+        |       |
+        |
+        |
         _|___
         """,
         """
-          _______
-         |/      |
-         |      (_)
-         |      \|/
-         |       |
-         |      /
-         |
+         _______
+        |/      |
+        |      (_)
+        |     \|/
+        |       |
+        |      /
+        |
         _|___
         """,
         """
-          _______
-         |/      |
-         |      (_)
-         |      \|/
-         |       |
-         |      / \     
-         |
+         _______
+        |/      |
+        |      (_)
+        |     \|/
+        |       |
+        |     / \     
+        |
         _|___
         """
     ]
     
     texto_forca= ft.Text(value=forca[0], font_family="monospace")
 
+    # ASCII ARTS (mantidos iguais)
     titulo_forca = ft.Text(
-"""
+""" 
  _____   _____   ____    _____   _____    _____         _____
 |  ___| /  _  \ |  _ \  |  ___| |  _  |  |___  |       |  _  |
 | |_    | | | | | |_| | | |     | | | |   ___| |       | | | |
@@ -182,7 +150,7 @@ def main(page: ft.Page):
 """
  ______    ____    __  __    ______     ______    _    _   ______   _____                  
 |  ____|  / __ \  |  \/  |  |  ____|   |  __  |  | |  | | |  ____| |  __ \    ⌐╦╦═─ (x_x)  
-| |      | |  | | |      |  | |_       | |  | |  | |  | | | |_     | |__| |           |    
+| |      | |  | | |      |  | |_       | |  | |  | |  | | | |_     | |__| |           |     
 | |  __  | |__| | | |\/| |  |   |      | |  | |  | |  | | |   |    |     /           /|\   
 | |  | | |  __  | | |  | |  |  _|      | |  | |  | |  | | |  _|    |  _ \           / | \  
 | |__| | | |  | | | |  | |  | |____    | |__| |   \ \/ /  | |____  | | \ \           / \   
@@ -199,16 +167,161 @@ def main(page: ft.Page):
 __    __  ______   _    _      _    _   ______   _    _    * *    * *  
 \ \  / / |  __  | | |  | |    | |  | | |      | | \  | |    * (^o^) *  
  \ \/ /  | |  | | | |  | |    | |  | | |_    _| |  \ | |       /|\     
-  \  /   | |  | | | |  | |    | |/\| |   |  |   |   \| |      / | \    
-   ||    | |  | | | |  | |    |      |  _|  |_  | |\   |        |      
-   ||    | |__| | | |__| |    |  /\  | |      | | | \  |       / \     
-   ||    |______| |______|    |_/  \_| |______| |_|  \_|      /   \   
+  \  /   | |  | | | |  | |    | |/\| |   |  |   |   \| |      / | \     
+   ||    | |  | | | |  | |    |      |  _|  |_  | |\   |        |       
+   ||    | |__| | | |__| |    |  /\  | |      | | | \  |       / \      
+   ||    |______| |______|    |_/  \_| |______| |_|  \_|      /   \     
 """,
         font_family="Courier New",
         size=18,
         weight=ft.FontWeight.BOLD,
         color="#4ADE80"
     )
+
+    # *** NOVO MINIJOGO ***
+    def minijogo_numero():
+        numero_secreto["valor"] = random.randint(0, 9)
+        minijogo_ativo["valor"] = True
+        clean_page()
+        
+        numero_input = ft.TextField(
+            label="Digite um número (0-9)",
+            width=250,
+            keyboard_type=ft.KeyboardType.NUMBER,
+            max_length=1
+        )
+        
+        def tentar_numero(e):
+            try:
+                chute = int(numero_input.value)
+                if 0 <= chute <= 9:
+                    if chute == numero_secreto["valor"]:
+                        # GANHOU 1 VIDA!
+                        minijogo_ativo["valor"] = False
+                        vidas["valor"] = 1
+                        page.dialog.open = False
+                        abrir_pagina(nivel_atual)
+                    else:
+                        derrota_final()
+                else:
+                    numero_input.error_text = "Só números de 0 a 9!"
+                    page.update()
+            except:
+                numero_input.error_text = "Número inválido!"
+                page.update()
+        
+        page.add(
+            ft.Container(
+                bgcolor="#020617",
+                border_radius=20,
+                padding=20,
+                content=ft.Column(
+                    [
+                        ft.Text(
+                            "🎲 ÚLTIMA CHANCE! 🎲",
+                            size=24,
+                            weight=ft.FontWeight.BOLD,
+                            color="#FACC15"
+                        ),
+                        ft.Text(
+                            "Adivinha o número de 0 a 9 para ganhar 1 vida!",
+                            size=16,
+                            color="#E5E7EB"
+                        ),
+                        ft.Container(height=20),
+                        ft.Text(
+                            "Número secreto: ???",
+                            size=20,
+                            color="#F97373"
+                        ),
+                        ft.Container(height=10),
+                        numero_input,
+                        ft.Container(height=10),
+                        ft.Row(
+                            [
+                                ft.ElevatedButton(
+                                    "TENTAR",
+                                    icon=ft.Icons.CHECK,
+                                    bgcolor="#22C55E",
+                                    color="black",
+                                    width=120,
+                                    on_click=tentar_numero
+                                ),
+                                ft.ElevatedButton(
+                                    "DESISTIR",
+                                    icon=ft.Icons.CLOSE,
+                                    bgcolor="#F97373", 
+                                    color="black",
+                                    width=120,
+                                    on_click=derrota_final
+                                )
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            spacing=15
+                        ),
+                        ft.Container(height=20),
+                        ft.ElevatedButton(
+                            "Voltar ao Jogo",
+                            icon=ft.Icons.ARROW_BACK,
+                            bgcolor="#1E293B",
+                            color="#E5E7EB",
+                            on_click=derrota_final
+                        )
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=15
+                )
+            )
+        )
+        page.update()
+
+    def derrota_final():
+        minijogo_ativo["valor"] = False
+        jogo_terminado["valor"] = True
+        clean_page()
+        page.add(
+            ft.Container(
+                content=ft.Column(
+                    [
+                        capa_derrota,
+                        ft.Text(
+                            f"A palavra era: {palavra_atual['palavra']}",
+                            size=20,
+                            color="#E5E7EB",
+                        ),
+                        ft.Container(height=30),
+                        ft.Row(
+                            [
+                                ft.ElevatedButton(
+                                    "Tentar Outra Vez",
+                                    icon=ft.Icons.REPLAY,
+                                    bgcolor="#F97373",
+                                    color="black",
+                                    on_click=lambda e: reiniciar_nivel(nivel_atual),
+                                ),
+                                ft.ElevatedButton(
+                                    "Menu",
+                                    icon=ft.Icons.HOME,
+                                    bgcolor="#38BDF8",
+                                    color="black",
+                                    on_click=lambda e: (
+                                        gerar_novas_palavras_1_3(),
+                                        gerar_novas_palavras_2(),
+                                        abrir_pagina(modo_jogo),
+                                    ),
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                padding=20,
+                border_radius=16,
+                bgcolor="#020617",
+            )
+        )
 
     def clean_page():
         page.controls.clear()
@@ -234,7 +347,7 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         page.update()
 
     def clicar_letra(letra):
-        if jogo_terminado["valor"]:
+        if jogo_terminado["valor"] or minijogo_ativo["valor"]:
             return
 
         botoes_teclado[letra].disabled = True
@@ -257,18 +370,22 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
             if l not in letras_usadas and l not in [" ", "-"]:
                 ganhou = False
 
-        # VITÓRIA
+        # VITÓRIA - RESET VIDAS PARA PRÓXIMA PALAVRA (NÍVEL 3)
         if ganhou and not jogo_terminado["valor"]:
             indice_palavra["valor"] += 1
 
             if indice_palavra["valor"] < len(palavras_jogo):
+                # RESET COMPLETO PARA NÍVEL 3
+                vidas["valor"] = 6
+                texto_vidas.value = f"Vidas: 6"
+                texto_forca.value = forca[0]
+                
                 letras_usadas.clear()
                 letras_erradas.clear()
                 for botao in botoes_teclado.values():
                     botao.disabled = False
                 palavra_atual["palavra"] = palavras_jogo[indice_palavra["valor"]]
                 texto_erradas.value = ""
-                texto_forca.value = forca[0]
                 atualizar_palavra()
             else:
                 jogo_terminado["valor"] = True
@@ -291,9 +408,7 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
                                             icon=ft.Icons.REPLAY,
                                             bgcolor="#22C55E",
                                             color="black",
-                                            on_click=lambda e: reiniciar_nivel(
-                                                nivel_atual
-                                            ),
+                                            on_click=lambda e: reiniciar_nivel(nivel_atual),
                                         ),
                                         ft.ElevatedButton(
                                             "Menu",
@@ -319,58 +434,14 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
                     )
                 )
 
-        # DERROTA
-        if vidas["valor"] == 0:
-            jogo_terminado["valor"] = True
-            clean_page()
-            page.add(
-                ft.Container(
-                    content=ft.Column(
-                        [
-                            capa_derrota,
-                            ft.Text(
-                                f"A palavra era: {palavra_atual['palavra']}",
-                                size=20,
-                                color="#E5E7EB",
-                            ),
-                            ft.Container(height=30),
-                            ft.Row(
-                                [
-                                    ft.ElevatedButton(
-                                        "Tentar Outra Vez",
-                                        icon=ft.Icons.REPLAY,
-                                        bgcolor="#F97373",
-                                        color="black",
-                                        on_click=lambda e: reiniciar_nivel(
-                                            nivel_atual
-                                        ),
-                                    ),
-                                    ft.ElevatedButton(
-                                        "Menu",
-                                        icon=ft.Icons.HOME,
-                                        bgcolor="#38BDF8",
-                                        color="black",
-                                        on_click=lambda e: (
-                                            gerar_novas_palavras_1_3(),
-                                            gerar_novas_palavras_2(),
-                                            abrir_pagina(modo_jogo),
-                                        ),
-                                    ),
-                                ],
-                                alignment=ft.MainAxisAlignment.CENTER,
-                            ),
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                    ),
-                    padding=20,
-                    border_radius=16,
-                    bgcolor="#020617",
-                )
-            )
+        # DERROTA - MINIJOGO!
+        if vidas["valor"] == 0 and not minijogo_ativo["valor"]:
+            minijogo_numero()
+            return
 
         page.update()
 
+    # RESTO DO CÓDIGO (teclado, niveis, etc.) MANTIDO IGUAL
     def teclado():
         letras = "QWERTYUIOPASDFGHJKLZXCVBNM"
         botoes = []
@@ -407,6 +478,7 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         botoes_teclado.clear()
         vidas["valor"] = 6
         jogo_terminado["valor"] = False
+        minijogo_ativo["valor"] = False
         texto_vidas.value = f"Vidas: {vidas['valor']}"
         texto_erradas.value = ""
         texto_forca.value = forca[0]
@@ -436,11 +508,11 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         palavras_jogo.clear()
         palavras_jogo.extend(palavras_3_1)
         palavra_atual["palavra"] = palavras_jogo[0]
+        vidas["valor"] = 6
         texto_vidas.value = f"Vidas: {vidas['valor']}"
         texto_erradas.value = ""
         texto_forca.value = forca[0]
         layout_jogo(tema_1_3, voltar_destino=niveis)
-
 
     def jogar2():
         nonlocal nivel_atual
@@ -453,6 +525,7 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         palavras_jogo.clear()
         palavras_jogo.extend(palavras_3_1)
         palavra_atual["palavra"] = palavras_jogo[0]
+        vidas["valor"] = 6
         texto_vidas.value = f"Vidas: {vidas['valor']}"
         texto_erradas.value = ""
         texto_forca.value = forca[0]
@@ -469,6 +542,7 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         palavras_jogo.extend(palavras2)
         indice_palavra["valor"] = 0
         palavra_atual["palavra"] = palavras_jogo[indice_palavra["valor"]]
+        vidas["valor"] = 6  # 6 VIDAS POR PALAVRA
         texto_vidas.value = f"Vidas: {vidas['valor']}"
         texto_erradas.value = ""
         texto_forca.value = forca[0]
@@ -531,6 +605,7 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         )
         atualizar_palavra()
 
+    # RESTO DAS FUNÇÕES (niveis, modo_jogo, camigos, capa_abertura) MANTIDAS EXATAMENTE IGUAIS
     def niveis():
         clean_page()
         page.add(
@@ -600,6 +675,7 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
         botoes_teclado.clear()
         vidas["valor"] = 6
         jogo_terminado["valor"] = False
+        minijogo_ativo["valor"] = False
         indice_palavra["valor"] = 0
         palavra_atual["palavra"] = ""
         texto_vidas.value = f"Vidas: {vidas['valor']}"
@@ -672,6 +748,7 @@ __    __  ______   _    _      _    _   ______   _    _    * *    * *
             letras_usadas.clear()
             letras_erradas.clear()
             vidas["valor"] = 6
+            minijogo_ativo["valor"] = False
             texto_vidas.value = f"Vidas: {vidas['valor']}"
             texto_erradas.value = ""
             texto_forca.value = forca[0]
